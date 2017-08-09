@@ -1,51 +1,33 @@
 #include <Servo.h>
 
-Servo steer;
+Servo namlu;
+Servo tetik;  
 
-const int buzzer = 11;
-String readString;
-
-int val1 = 120;
-int val2 = 50;
-int val3 = 88;
-
+const int potpin = A0; 
+const int button = 2;
+ 
+int val;
+    
 void setup() 
 {
-  Serial.begin(9600); 
-  pinMode(buzzer , OUTPUT);
-  steer.attach(3);   
+  namlu.attach(3);
+  tetik.attach(4); 
+  Serial.begin(9600);
 }
 void loop() 
 {
-  while (Serial.available()) 
+  val = analogRead(potpin);
+  val = map(val,0,1023,0,180);            
+  Serial.println(val);
+  namlu.write(val);
+  if (digitalRead(button) == HIGH)
   {
-    delay(3);  
-    char c = Serial.read();
-    readString += c; 
+    tetik.write(125);
+    delay(15);
+  }  
+  else
+  {
+    tetik.write(85);
+    delay(15);                 
   }
-  if (readString.length() >0) 
-  {
-    Serial.println(readString);
-    if (readString == "k")
-    {
-      steer.write(val1);
-    }
-    else if (readString == "a")
-    {
-      steer.write(val2);
-    }
-    else
-    {
-      steer.write(val3);
-    }
-    if (readString == "x")
-    {
-      digitalWrite(buzzer , 1);
-    }
-    else
-    {
-      digitalWrite(buzzer , 0);
-    }
-    readString="";
-  } 
 }
